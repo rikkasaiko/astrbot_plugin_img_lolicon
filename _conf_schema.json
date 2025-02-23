@@ -1,0 +1,29 @@
+{
+    "r18":{
+        "type": "int",
+        "description": "r18开关 0:非R18 1:R18 2:混合",
+        "hint": "R18开关 0:非R18 1:R18 2:混合",
+        "default": 0,
+        "options": [0, 1, 2]
+    },
+    "num":{
+        "type": "int",
+        "description": "图片数量,默认是1,且只能是1",
+        "hint": "图片数量",
+        "default": 1
+    },
+    "size":{
+        "type": "string",
+        "description": "图片大小规格,original > regular > small > thumb > mini, 最大是original, 最小是mini,以此类推",  
+        "hint": "图片大小规格, original > regular > small > thumb > mini, 默认是regular",
+        "default": "original",
+        "options": ["original", "regular", "small", "thumb", "mini"]
+    },
+    "time":{
+        "type": "int",
+        "description": "请求cd,默认是30,",
+        "hint": "冷却时间",
+        "default": 30
+    }
+
+}
