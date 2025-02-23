@@ -23,18 +23,27 @@ class SetuPlugin(Star):
 
     @math.command("help")
     async def add(self, event: AstrMessageEvent):
+        """获取帮助"""
         yield event.plain_result(
-            "``/st help`` ----获取帮助\n"
-            "``/st st`` & ``/setu st <tag>`` ----获取随机涩图与获取对应tag涩图\n"
-            "``/st cd <时间>`` 🔒----设置涩图冷却时间(单位:秒)\n"
-            "``/st r18 <0/1/2>`` 🔒----设置R18模式(0关闭/1开启)\n"  # 新增
-            "``/st num <1-3>`` 🔒----设置单次请求图片数量"  # 新增
+
+            "   /st help     ⇒ 显示帮助菜单  \n"
+            "   /setu          ⇒ 随机推荐涩图  \n"
+            "   /setu <标签>   ⇒ 指定标签搜索  \n"
+            "─────────────────────────────────\n"
+            f"   冷却时间：{self.config['time']}秒          \n"
+            f"   R18模式：{ {0:'关闭',1:'开启',2:'混合'}[self.config['r18']]}            \n"
+            f"   单次数量：{self.config['num']}张         \n"
+            "─────────────────────────────────\n"
+            "   /st cd <秒数>  ⇒ 调整冷却时间  \n"
+            "   /st r18 <0|1|2> ⇒ 切换内容模式  \n"
+            "   /st num <1-3>  ⇒ 设置请求数量   \n"
         )
 
         
     @permission_type(PermissionType.ADMIN)
     @math.command("cd")
     async def cd(self, event: AstrMessageEvent, cd: int):
+        """设置涩图冷却时间"""
         if cd <= 0:
             yield event.plain_result("冷却时间必须为正整数")
         else:
@@ -47,6 +56,7 @@ class SetuPlugin(Star):
     @math.command("r18")
     
     async def set_r18(self, event: AstrMessageEvent, mode: int):
+        """设置R18模式"""
         
         text = {0: "关闭", 1: "开启", 2: "混合"}
         if mode not in (0, 1, 2):   
@@ -65,6 +75,7 @@ class SetuPlugin(Star):
     @permission_type(PermissionType.ADMIN)
     @math.command("num")
     async def set_num(self, event: AstrMessageEvent, num: int):
+        """设置单次请求图片数量"""
 
         if num not in (1, 2, 3):
             yield event.plain_result("参数错误，请输入1-3")
@@ -77,6 +88,7 @@ class SetuPlugin(Star):
 
     @command("setu")
     async def setu(self, event: AstrMessageEvent):
+        """发送一张涩图"""
         user_id = str(event.get_sender_id())  # 获取用户ID并转为字符串
         current_time = int(time.time())
 
