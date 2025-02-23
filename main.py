@@ -157,7 +157,7 @@ class SetuPlugin(Star):
 
     @llm_tool(name="search_setu")
     async def search_setu_tool(self, event: AstrMessageEvent, num: int, tags: str):
-        '''根据请求的对应数字以及标签的涩图
+        '''根据请求的数量,标签的发送涩图
         Args:
             num(number): 请求数量
             tags(string): 标签 tags
