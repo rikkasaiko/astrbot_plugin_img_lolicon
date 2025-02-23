@@ -16,7 +16,7 @@ class SetuPlugin(Star):
         self.cooldown_duration = self.config.get("time", 30)  # 默认冷却时间为30秒
         self.cooldowns = {}
 
-    @command_group("setu")
+    @command_group("st")
     def math(self):
         pass
 
@@ -75,7 +75,7 @@ class SetuPlugin(Star):
 
 
 
-    @math.command("st")
+    @command("setu")
     async def setu(self, event: AstrMessageEvent):
         user_id = str(event.get_sender_id())  # 获取用户ID并转为字符串
         current_time = int(time.time())
