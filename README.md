@@ -3,24 +3,23 @@
 - api文档 <https://api.lolicon.app/>
 
 ## 指令
-
  `/setu st` 获取随机图片
-    ```
+```
   /setu st
-    ```
+```
  `/setu st <tag>`  **or** `/setu st <tag> <tag>` 获取对应tags图片
-    ```
+ ```
   /setu st 萝莉
   /setu st 少女 白丝
-    ```
+```
  `/setu cd <num>`, 通过指令修改cd限制, 单位秒, 默认为`30`秒
-    ```
+ ```
   /setu cd 10
-    ```
+```
  `/setu r18 <num>`, 通过指令修改r18开关, 默认为`0`,  `1`为开启, `0`为关闭, `2`为混合
-    ```
+ ```
   /setu r18 2
-    ```
+```
 
 ## LLM函数调用
 
