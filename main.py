@@ -27,7 +27,7 @@ class SetuPlugin(Star):
             "``/setu help`` ----获取帮助\n"
             "``/setu st`` & ``/setu st <tag>`` ----获取随机涩图与获取对应tag涩图\n"
             "``/setu cd <时间>`` 🔒----设置涩图冷却时间(单位:秒)\n"
-            "``/setu r18 <0/1>`` 🔒----设置R18模式(0关闭/1开启)\n"  # 新增
+            "``/setu r18 <0/1/2>`` 🔒----设置R18模式(0关闭/1开启)\n"  # 新增
             "``/setu num <1-3>`` 🔒----设置单次请求图片数量"  # 新增
         )
 
@@ -47,10 +47,7 @@ class SetuPlugin(Star):
     @math.command("r18")
     
     async def set_r18(self, event: AstrMessageEvent, mode: int):
-        '''设置R18模式
-        Args:
-            mode (int): 0-关闭 1-启用 2-混合
-        '''
+        
         text = {0: "关闭", 1: "开启", 2: "混合"}
         if mode not in (0, 1, 2):   
             yield event.plain_result("参数错误，请输入0(关闭)或1(启用)或者2(混合)")
@@ -68,10 +65,7 @@ class SetuPlugin(Star):
     @permission_type(PermissionType.ADMIN)
     @math.command("num")
     async def set_num(self, event: AstrMessageEvent, num: int):
-        '''设置请求数量
-        Args:
-            num (int): 1-3
-        '''
+
         if num not in (1, 2, 3):
             yield event.plain_result("参数错误，请输入1-3")
             return
