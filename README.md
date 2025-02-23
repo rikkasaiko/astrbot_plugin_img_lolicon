@@ -3,6 +3,10 @@
 - api文档 <https://api.lolicon.app/>
 
 ## 指令
+ `/st help` 查看帮助信息
+ ```
+  /st help
+  ```
  `/setu` 获取随机图片
 ```
   /setu
