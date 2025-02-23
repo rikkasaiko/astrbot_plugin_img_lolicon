@@ -5,7 +5,7 @@ import json
 from astrbot.api.message_components import Node, Plain, Image
 from astrbot.api.event.filter import *
 
-@register("setu", "rikka", "一个lolicon api的涩图插件", "2.0.1")
+@register("setu", "rikka", "一个lolicon api的涩图插件", "2.0.2")
 class SetuPlugin(Star):
     def __init__(self, context: Context, config: dict = None):
         super().__init__(context)
@@ -31,7 +31,7 @@ class SetuPlugin(Star):
             "   /setu <标签>   ⇒ 指定标签搜索  \n"
             "─────────────────────────────────\n"
             f"   冷却时间：{self.config['time']}秒          \n"
-            f"   R18模式：{ {0:'关闭',1:'开启',2:'混合'}[self.config['r18']]}            \n"
+            f"   R18模式：{ {0:'关闭',1:'开启',2:'混合'}[self.config['r18']]}\n"
             f"   单次数量：{self.config['num']}张         \n"
             "─────────────────────────────────\n"
             "   /st cd <秒数>  ⇒ 调整冷却时间  \n"
