@@ -157,7 +157,7 @@ class SetuPlugin(Star):
 
     @llm_tool(name="search_setu")
     async def search_setu_tool(self, event: AstrMessageEvent, num: int, tags: str):
-        '''根据请求的数量,标签的发送涩图
+        '''根据用户希望发送涩图,当用户要求或者希望你给他1份涩图或者1张涩图时调用此工具
         Args:
             num(number): 请求数量
             tags(string): 标签 tags
