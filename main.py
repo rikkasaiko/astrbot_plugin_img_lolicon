@@ -156,12 +156,11 @@ class SetuPlugin(Star):
 
 
     @llm_tool(name="search_setu")
-    async def search_setu_tool(self, event: AstrMessageEvent, num: int):
+    async def search_setu_tool(self, event: AstrMessageEvent, num: str):
         '''根据用户希望发送涩图,当用户要求或者希望你给他1份涩图或者1张涩图时调用此工具
         Args:
             num(number): 请求数量
         '''  
-        nums = int(num)
         try:
 
             
@@ -184,7 +183,7 @@ class SetuPlugin(Star):
             self.cooldowns[user_id] = current_time + self.config["time"]
             print(f"用户{user_id} 剩余冷却时间: {self.cooldowns[user_id] - current_time}, 冷却持续时间: {self.cooldown_duration}")
 
-            tag_list = [t.strip() for t in tags.split(',')]
+            # tag_list = [t.strip() for t in tags.split(',')]
 
             
             # 复用现有的图片获取逻辑 &tag={'&tag='.join(tag_list)
@@ -193,7 +192,7 @@ class SetuPlugin(Star):
                 async with session.get(url) as response:
                     data = await response.json()
                     # 发送图片消息链
-                    for index, item in enumerate(data["data"][:nums]):
+                    for index, item in enumerate(data["data"][:num]):
                         image_url = item["urls"][self.size]
                         chain = [
                             Plain(f"标题：{item['title']}\nPID：{item['pid']}\n标签：{', '.join(item['tags'])}"),
