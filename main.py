@@ -157,10 +157,15 @@ class SetuPlugin(Star):
 
     @llm_tool(name="search_setu")
     async def search_setu_tool(self, event: AstrMessageEvent, num: int):
-        '''根据用户希望发送涩图,当用户要求或者希望你给他1份涩图或者1张涩图时调用此工具
+        '''根据用户希望发送涩图。当用户要求或者希望你给他1份涩图或者1张涩图时调用此工具
         Args:
             num(number): 请求数量
         '''  
+        nums = int(num)
+        
+        size = self.config["size"]
+        r18 = self.config["r18"]
+
         try:
 
             
@@ -187,12 +192,12 @@ class SetuPlugin(Star):
 
             
             # 复用现有的图片获取逻辑 &tag={'&tag='.join(tag_list)
-            url = f"https://api.lolicon.app/setu/v2?r18={self.r18}&num={num}"
+            url = f"https://api.lolicon.app/setu/v2?r18={r18}&num={nums}&size={size}"
             async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(verify_ssl=False)) as session:
                 async with session.get(url) as response:
                     data = await response.json()
                     # 发送图片消息链
-                    for index, item in enumerate(data["data"][:num]):
+                    for index, item in enumerate(data["data"][:nums]):
                         image_url = item["urls"][self.size]
                         chain = [
                             Plain(f"标题：{item['title']}\nPID：{item['pid']}\n标签：{', '.join(item['tags'])}"),
@@ -206,4 +211,3 @@ class SetuPlugin(Star):
         except Exception as e:
             logger.error(f"工具调用失败：{str(e)}")
             yield event.plain_result("涩图搜索服务暂时不可用")
-
