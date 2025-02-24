@@ -187,8 +187,8 @@ class SetuPlugin(Star):
             tag_list = [t.strip() for t in tags.split(',')]
 
             
-            # 复用现有的图片获取逻辑
-            url = f"https://api.lolicon.app/setu/v2?r18={self.r18}&num={nums}&tag={'&tag='.join(tag_list)}"
+            # 复用现有的图片获取逻辑 &tag={'&tag='.join(tag_list)
+            url = f"https://api.lolicon.app/setu/v2?r18={self.r18}&num={nums}}"
             async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(verify_ssl=False)) as session:
                 async with session.get(url) as response:
                     data = await response.json()
