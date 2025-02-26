@@ -144,7 +144,7 @@ class SetuPlugin(Star):
                         image_url = image_data["urls"][size]
                         chain = [
                             At(qq=event.get_sender_id()),
-                            Plain(f"tag: {img_tag}\npid: {img_pid}\ntitle: {img_title}"),
+                            Plain(f"tag: {', '.join(img_tag)}\npid: {img_pid}\ntitle: {img_title}"),
                             Image.fromURL(image_url),
                         ]
                         yield event.chain_result(chain)
