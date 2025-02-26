@@ -5,7 +5,7 @@ import json
 from astrbot.api.message_components import Node, Plain, Image
 from astrbot.api.event.filter import *
 
-@register("setu", "rikka", "一个lolicon api的涩图插件", "2.0.3")
+@register("一个基于lolicon api的涩图插件", "rikka", "img_lolicon", "2.0.3")
 class SetuPlugin(Star):
     def __init__(self, context: Context, config: dict = None):
         super().__init__(context)
