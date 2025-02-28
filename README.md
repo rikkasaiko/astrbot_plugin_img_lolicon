@@ -1,3 +1,11 @@
+</div>
+
+<div align="center">
+
+![:name](https://count.getloli.com/@img_lolicon?name=img_lolicon&theme=booru-jaypee&padding=7&offset=-5&align=top&scale=1&pixelated=1&darkmode=auto)
+
+</div>
+
 # 使用lolicon api获取涩图
 
 - api文档 <https://api.lolicon.app/>
