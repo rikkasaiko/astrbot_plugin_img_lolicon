@@ -1,11 +1,11 @@
 from astrbot.api.all import *
 import aiohttp
-import time
 import json
 from astrbot.api.message_components import Node, Plain, Image
 from astrbot.api.event.filter import *
+import time
 
-@register("一个基于lolicon api的涩图插件", "rikka", "img_lolicon", "2.0.3")
+@register("setu", "rikka", "一个lolicon api的涩图插件", "2.0.3")
 class SetuPlugin(Star):
     def __init__(self, context: Context, config: dict = None):
         super().__init__(context)
@@ -118,7 +118,7 @@ class SetuPlugin(Star):
 
 
         # 获取图片
-        url = f"https://api.lolicon.app/setu/v2?r18={r18}&num={num}&size={size}&tag={tag_param}"
+        url = f"https://api.lolicon.app/setu/v2?r18={r18}&num={num}&size={self.size}&tag={tag_param}"
         ssl_context = aiohttp.TCPConnector(verify_ssl=False)
         async with aiohttp.ClientSession(connector=ssl_context) as session:
             try:
@@ -132,11 +132,10 @@ class SetuPlugin(Star):
                     if not data["data"]:
                         yield event.plain_result(f"\n未获取到图片{url}")
                         return
-                    
-
-                    
+            
                     logger.info(f"收到请求:图片质量为{size}, 数量为{num}, r18为{r18},冷却时间为{cd}")
-
+                    
+                    ns = Nodes([])
                     for index, image_data in enumerate(data["data"][:num]):  # 新增循环
                         img_pid = image_data["pid"]
                         img_tag = image_data["tags"]
@@ -147,8 +146,15 @@ class SetuPlugin(Star):
                             Plain(f"tag: {', '.join(img_tag)}\npid: {img_pid}\ntitle: {img_title}"),
                             Image.fromURL(image_url),
                         ]
-                        yield event.chain_result(chain)
-                        logger.info(f"发送第 {index+1} 张涩图: {image_url}")
+                        node = Node(
+                            uin=event.get_sender_id(),
+                            name=event.get_sender_name(),
+                            content=chain
+                        )
+                        ns.nodes.append(node)
+                        
+                    yield event.chain_result([ns])
+                    logger.info(f"共{self.num}张涩图,正在发送第 {index+1} 张涩图: {image_url}")
 
 
 
@@ -198,14 +204,22 @@ class SetuPlugin(Star):
                 async with session.get(url) as response:
                     data = await response.json()
                     # 发送图片消息链
+                    ns = Nodes([])
                     for index, item in enumerate(data["data"][:nums]):
                         image_url = item["urls"][self.size]
                         chain = [
                             Plain(f"标题：{item['title']}\nPID：{item['pid']}\n标签：{', '.join(item['tags'])}"),
                             Image.fromURL(image_url)
                         ]
-                        yield event.chain_result(chain)
-                        logger.info(f"共{nums}张涩图,正在发送第{index+1}张涩图: {image_url}")
+                        node = Node(
+                            uin=event.get_sender_id(),
+                            name=event.get_sender_name(),
+                            content=chain
+                        )
+                        ns.nodes.append(node)
+                        
+                    yield event.chain_result([ns])
+                    logger.info(f"共{nums}张涩图,正在发送第{index+1}张涩图: {image_url}")
                 
                     
 
