@@ -142,7 +142,6 @@ class SetuPlugin(Star):
                         img_title = image_data["title"]
                         image_url = image_data["urls"][size]
                         chain = [
-                            At(qq=event.get_sender_id()),
                             Plain(f"tag: {', '.join(img_tag)}\npid: {img_pid}\ntitle: {img_title}"),
                             Image.fromURL(image_url),
                         ]
@@ -152,9 +151,10 @@ class SetuPlugin(Star):
                             content=chain
                         )
                         ns.nodes.append(node)
+                        logger.info(f"共{self.num}张涩图,正在发送第 {index+1} 张涩图: {image_url}")
                         
-                    yield event.chain_result([ns])
-                    logger.info(f"共{self.num}张涩图,正在发送第 {index+1} 张涩图: {image_url}")
+                yield event.chain_result([ns])
+                
 
 
 
@@ -217,9 +217,10 @@ class SetuPlugin(Star):
                             content=chain
                         )
                         ns.nodes.append(node)
+                        logger.info(f"共{nums}张涩图,正在发送第{index+1}张涩图: {image_url}")
                         
                     yield event.chain_result([ns])
-                    logger.info(f"共{nums}张涩图,正在发送第{index+1}张涩图: {image_url}")
+                    
                 
                     
 
