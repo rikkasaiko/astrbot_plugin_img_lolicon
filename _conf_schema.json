@@ -16,7 +16,7 @@
         "type": "string",
         "description": "图片大小规格,original > regular > small > thumb > mini, 最大是original, 最小是mini,以此类推",  
         "hint": "图片大小规格, original > regular > small > thumb > mini, 默认是regular",
-        "default": "original",
+        "default": "regular",
         "options": ["original", "regular", "small", "thumb", "mini"]
     },
     "time":{
