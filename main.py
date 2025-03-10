@@ -6,7 +6,7 @@ from astrbot.api.event.filter import *
 import time
 from astrbot.api.event import filter, AstrMessageEvent
 
-@register("setu", "rikka", "一个lolicon api的涩图插件", "2.0.3")
+@register("setu", "rikka", "一个lolicon api的涩图插件", "2.2.0")
 class SetuPlugin(Star):
     def __init__(self, context: Context, config: AstrBotConfig):
         super().__init__(context)
