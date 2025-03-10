@@ -98,10 +98,9 @@ class SetuPlugin(Star):
         user_id = str(event.get_sender_id())  # 获取用户ID并转为字符串
         current_time = int(time.time())
 
-        # 检查冷却状态
-        qq_of= event.message_obj.raw_message
-        print(qq_of)
-
+        qq_of = event.get_platform_name()
+        
+        
         user_cooldown = self.cooldowns.get(user_id, 0)  # 获取用户的冷却时间，如果没有则默认为0
 
         if user_cooldown > current_time:  # 如果用户的冷却时间大于当前时间
@@ -115,7 +114,7 @@ class SetuPlugin(Star):
 
         # 从用户消息中获取tag（假设用户输入格式为 "setu tag1 tag2"）
         tags = event.get_message_str().split()[1:]  # 获取所有tag
-        tag_param = '&tag='.join(标签)  # 将tag合并为字符串
+        tag_param = '&tag='.join(tags)  # 将tag合并为字符串
 
         size = self.config["size"]
         num = self.config["num"]
@@ -141,18 +140,20 @@ class SetuPlugin(Star):
                     logger.info(f"收到请求:图片质量为{size}, 数量为{num}, r18为{r18},冷却时间为{cd}")
                     
                     ns = Nodes([])
+                    
+                    
                     for index, image_data in enumerate(data["data"][:num]):  # 新增循环
                         img_pid = image_data["pid"]
                         img_tag = image_data["tags"]
                         img_title = image_data["title"]
                         image_url = image_data["urls"][size]
-                        if qq_of != "":
+                        if qq_of == "qq_official_webhook":
+                            logger.info(f"收到qq_of请求,正在发送涩图: {image_url}")
                             chain = [
                                 Plain(f"标题：{img_title}\nPID：{img_pid}\n标签：{', '.join(img_tag)}"),
                                 Image.fromURL(image_url)
                             ]
                             yield event.chain_result(chain)
-                            logger.info(f"发送图片: {image_url}")
                         else:
                             ns.nodes.append(
                                 Node(
@@ -165,7 +166,7 @@ class SetuPlugin(Star):
                                 )
                             )
                         
-                            logger.info(f"共{self.num}张涩图,正在发送第 {index+1} 张涩图: {image_url}")
+                            logger.info(f"收到aiohttq请求,共{num}张涩图,正在发送第{index+1}张涩图: {image_url}")
          
                 yield event.chain_result([ns])
                 
@@ -183,14 +184,10 @@ class SetuPlugin(Star):
             num(number): 请求数量
         '''  
         nums = int(num)
-        
         size = self.config["size"]
         r18 = self.config["r18"]
-        qq_of= event.message_obj.raw_message
-
-        try:
-
-            
+        
+        try:    
             # 范围验证,避免过多导致卡线程
             if not (1 <= num <= 3):
                 yield event.plain_result(f"请求数量 {num} 超出范围 (1-3)")
@@ -211,21 +208,23 @@ class SetuPlugin(Star):
             print(f"用户{user_id} 剩余冷却时间: {self.cooldowns[user_id] - current_time}, 冷却持续时间: {self.cooldown_duration}")
             # tag_list = [t.strip() for t in tags.split(',')]
             # 复用现有的图片获取逻辑 &tag={'&tag='.join(tag_list)
-            url = f"https://api.lolicon.app/setu/v2?r18={r18}&num={nums}&size={self.size}"
+            url = f"https://api.lolicon.app/setu/v2?r18={r18}&num={nums}&size={size}"
             async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(verify_ssl=False)) as session:
                 async with session.get(url) as response:
                     data = await response.json()
                     # 发送图片消息链
                     ns = Nodes([])
+                    qq_of = event.get_platform_name()
                     for index, item in enumerate(data["data"][:nums]):
-                        image_url = item["urls"][self.size]
-                        if qq_of!= "":
+                        image_url = item["urls"][size]
+                        if qq_of == "qq_official_webhook":
+                            logger.info(f"收到qq_of请求,正在发送图片: {image_url}")
                             chain = [
                                 Plain(f"标题：{item['title']}\nPID：{item['pid']}\n标签：{', '.join(item['tags'])}"),
                                 Image.fromURL(image_url)
                             ]
                             yield event.chain_result(chain)
-                            logger.info(f"发送图片: {image_url}")
+                            
                         else:
                             ns.nodes.append(
                                 Node(
@@ -237,13 +236,10 @@ class SetuPlugin(Star):
                                     ]
                                 )  
                             )
-                            logger.info(f"共{nums}张涩图,正在发送第{index+1}张涩图: {image_url}")
+                            logger.info(f"收到aiohttq请求,共{nums}张涩图,正在发送第{index+1}张涩图: {image_url}")
                         
                     yield event.chain_result([ns])
                     
-                
-                    
-
         except Exception as e:
             logger.error(f"工具调用失败：{str(e)}")
             yield event.plain_result("涩图搜索服务暂时不可用")
