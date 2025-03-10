@@ -4,10 +4,11 @@ import json
 from astrbot.api.message_components import Node, Plain, Image
 from astrbot.api.event.filter import *
 import time
+from astrbot.api.event import filter, AstrMessageEvent
 
 @register("setu", "rikka", "一个lolicon api的涩图插件", "2.0.3")
 class SetuPlugin(Star):
-    def __init__(self, context: Context, config: dict = None):
+    def __init__(self, context: Context, config: AstrBotConfig):
         super().__init__(context)
         self.config = config or {}
         self.r18 = self.config.get("r18", 0)
@@ -51,6 +52,7 @@ class SetuPlugin(Star):
             self.config["time"] = int(cd)  # 更新配置
             yield event.plain_result(f"冷却时间设置为: {cd}秒")
             logger.info(f"冷却时间设置为: {self.config}秒")
+            self.config.save_config()
 
 
     @permission_type(PermissionType.ADMIN)
@@ -66,10 +68,12 @@ class SetuPlugin(Star):
         if mode == 2:
             yield event.plain_result(f"{f'已开启{text[mode]}模式' if self.config['r18'] != mode else '重复开启混合模式'}")
             self.config["r18"] = mode
+            self.config.save_config()
             return
         
         yield event.plain_result(f"R18模式{f'已是{text[mode]}状态' if self.config['r18'] == mode else f'已设置为{text[mode]}'}")
         self.config["r18"] = mode
+        self.config.save_config()
 
 
 
@@ -84,6 +88,7 @@ class SetuPlugin(Star):
 
         self.config["num"] = int(num)
         yield event.plain_result(f"请求数量已设置为: {num}")
+        self.config.save_config()
 
 
 
@@ -94,6 +99,9 @@ class SetuPlugin(Star):
         current_time = int(time.time())
 
         # 检查冷却状态
+        qq_of= event.message_obj.raw_message
+        print(qq_of)
+
         user_cooldown = self.cooldowns.get(user_id, 0)  # 获取用户的冷却时间，如果没有则默认为0
 
         if user_cooldown > current_time:  # 如果用户的冷却时间大于当前时间
@@ -107,15 +115,12 @@ class SetuPlugin(Star):
 
         # 从用户消息中获取tag（假设用户输入格式为 "setu tag1 tag2"）
         tags = event.get_message_str().split()[1:]  # 获取所有tag
-        tag_param = '&tag='.join(tags)  # 将tag合并为字符串
-
-
+        tag_param = '&tag='.join(标签)  # 将tag合并为字符串
 
         size = self.config["size"]
         num = self.config["num"]
         r18 = self.config["r18"]
         cd = self.config["time"]
-
 
         # 获取图片
         url = f"https://api.lolicon.app/setu/v2?r18={r18}&num={num}&size={self.size}&tag={tag_param}"
@@ -141,18 +146,27 @@ class SetuPlugin(Star):
                         img_tag = image_data["tags"]
                         img_title = image_data["title"]
                         image_url = image_data["urls"][size]
-                        chain = [
-                            Plain(f"tag: {', '.join(img_tag)}\npid: {img_pid}\ntitle: {img_title}"),
-                            Image.fromURL(image_url),
-                        ]
-                        node = Node(
-                            uin=event.get_sender_id(),
-                            name=event.get_sender_name(),
-                            content=chain
-                        )
-                        ns.nodes.append(node)
-                        logger.info(f"共{self.num}张涩图,正在发送第 {index+1} 张涩图: {image_url}")
+                        if qq_of != "":
+                            chain = [
+                                Plain(f"标题：{img_title}\nPID：{img_pid}\n标签：{', '.join(img_tag)}"),
+                                Image.fromURL(image_url)
+                            ]
+                            yield event.chain_result(chain)
+                            logger.info(f"发送图片: {image_url}")
+                        else:
+                            ns.nodes.append(
+                                Node(
+                                    uin=event.get_sender_id(),
+                                    name=event.get_sender_name(),
+                                    content=[
+                                        Plain(f"标题：{img_title}\nPID：{img_pid}\n标签：{', '.join(img_tag)}"),
+                                        Image.fromURL(image_url)
+                                    ]
+                                )
+                            )
                         
+                            logger.info(f"共{self.num}张涩图,正在发送第 {index+1} 张涩图: {image_url}")
+         
                 yield event.chain_result([ns])
                 
 
@@ -172,6 +186,7 @@ class SetuPlugin(Star):
         
         size = self.config["size"]
         r18 = self.config["r18"]
+        qq_of= event.message_obj.raw_message
 
         try:
 
@@ -194,10 +209,7 @@ class SetuPlugin(Star):
             # 更新用户的冷却时间
             self.cooldowns[user_id] = current_time + self.config["time"]
             print(f"用户{user_id} 剩余冷却时间: {self.cooldowns[user_id] - current_time}, 冷却持续时间: {self.cooldown_duration}")
-
             # tag_list = [t.strip() for t in tags.split(',')]
-
-            
             # 复用现有的图片获取逻辑 &tag={'&tag='.join(tag_list)
             url = f"https://api.lolicon.app/setu/v2?r18={r18}&num={nums}&size={self.size}"
             async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(verify_ssl=False)) as session:
@@ -207,17 +219,25 @@ class SetuPlugin(Star):
                     ns = Nodes([])
                     for index, item in enumerate(data["data"][:nums]):
                         image_url = item["urls"][self.size]
-                        chain = [
-                            Plain(f"标题：{item['title']}\nPID：{item['pid']}\n标签：{', '.join(item['tags'])}"),
-                            Image.fromURL(image_url)
-                        ]
-                        node = Node(
-                            uin=event.get_sender_id(),
-                            name=event.get_sender_name(),
-                            content=chain
-                        )
-                        ns.nodes.append(node)
-                        logger.info(f"共{nums}张涩图,正在发送第{index+1}张涩图: {image_url}")
+                        if qq_of!= "":
+                            chain = [
+                                Plain(f"标题：{item['title']}\nPID：{item['pid']}\n标签：{', '.join(item['tags'])}"),
+                                Image.fromURL(image_url)
+                            ]
+                            yield event.chain_result(chain)
+                            logger.info(f"发送图片: {image_url}")
+                        else:
+                            ns.nodes.append(
+                                Node(
+                                    uin=event.get_sender_id(),
+                                    name=event.get_sender_name(),
+                                    content=[
+                                        Plain(f"标题：{item['title']}\nPID：{item['pid']}\n标签：{', '.join(item['tags'])}"),
+                                        Image.fromURL(image_url)
+                                    ]
+                                )  
+                            )
+                            logger.info(f"共{nums}张涩图,正在发送第{index+1}张涩图: {image_url}")
                         
                     yield event.chain_result([ns])
                     
