@@ -6,9 +6,10 @@
 
 </div>
 
-# 使用lolicon api获取涩图
+# 使用lolicon api or pix.zhenxun获取涩图
 
 - api文档 <https://api.lolicon.app/>
+- api文档 <https://pix.zhenxun.org/#/docs/>
 
 ## 指令
  `/st help` 查看帮助信息
