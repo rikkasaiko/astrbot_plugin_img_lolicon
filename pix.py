@@ -84,14 +84,11 @@ async def setu_plugin(self, event: AstrMessageEvent, tags: str, config: json):
                 data = await response.json()
 
                 if data["error"]:
-                    yield event.plain_result(f"\n获取图片失败：{data['error']}")
-                    return
-
-                if not data["data"]:
-                    yield event.plain_result(f"\n未获取到图片{url}")
-                    return
-            
+                    return event.plain_result(f"\n获取图片失败：{data['error']}")
                     
+                if not data["data"]:
+                    return event.plain_result(f"\n未获取到图片{url}")
+                                       
                 logger.info(f"收到请求:图片质量为{size}, 数量为{num}, r18为{r18},冷却时间为{cd}")
                     
                 ns = Nodes([])
@@ -122,4 +119,4 @@ async def setu_plugin(self, event: AstrMessageEvent, tags: str, config: json):
                         logger.info(f"共{num}张涩图,正在发送第 {index+1} 张涩图: {image_url}")  
                 return event.chain_result([ns])
         except Exception as e:
-            yield event.plain_result(f"\n获取图片失败：{e}")
+            return event.plain_result(f"\n获取图片失败：{e}")
