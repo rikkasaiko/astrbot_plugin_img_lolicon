@@ -57,3 +57,50 @@ async def pix_plugin(self, config: json, event: AstrMessageEvent, tags: str, num
         return event.plain_result(f"😢 JSON 解析失败: {str(e)}")
     except Exception as e:
         return event.plain_result(f"😢 未知错误: {str(e)}")
+        
+async def setu_plugin(self, event: AstrMessageEvent, tags: str, config: json):
+    """发送lolicon涩图"""
+    config = config
+    size = config["size"]
+    num = config["num"]
+    r18 = config["r18"]
+    cd = config["time"]
+        # 获取图片
+    url = f"https://api.lolicon.app/setu/v2?r18={r18}&num={num}&size={size}&tag={标签}"
+    ssl_context = aiohttp.TCPConnector(verify_ssl=False)
+    async with aiohttp.ClientSession(connector=ssl_context) as session:
+        try:
+            async with session.get(url) as response:
+                data = await response.json()
+
+                if data["error"]:
+                    yield event.plain_result(f"\n获取图片失败：{data['error']}")
+                    return
+
+                if not data["data"]:
+                    yield event.plain_result(f"\n未获取到图片{url}")
+                    return
+            
+                    
+                logger.info(f"收到请求:图片质量为{size}, 数量为{num}, r18为{r18},冷却时间为{cd}")
+                    
+                ns = Nodes([])
+                for index, image_data in enumerate(data["data"][:num]):  # 新增循环
+                    img_pid = image_data["pid"]
+                    img_tag = image_data["tags"]
+                    img_title = image_data["title"]
+                    image_url = image_data["urls"][size]
+                    chain = [
+                            Plain(f"tag: {', '.join(img_tag)}\npid: {img_pid}\ntitle: {img_title}"),
+                            Image.fromURL(image_url),
+                        ]
+                    node = Node(
+                            uin=event.get_sender_id(),
+                            name=event.get_sender_name(),
+                            content=chain
+                        )
+                    ns.nodes.append(node)
+                    logger.info(f"共{num}张涩图,正在发送第 {index+1} 张涩图: {image_url}")  
+            yield event.chain_result([ns])
+        except Exception as e:
+            yield event.plain_result(f"\n获取图片失败：{e}")
