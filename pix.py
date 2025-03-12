@@ -38,21 +38,21 @@ async def pix_plugin(self, config: json, event: AstrMessageEvent, tags: str, num
                     pix_url = pix["url"]
                     url = pix_url.replace("i.pximg.net", "i.pixiv.re")
                     if event.get_platform_name() == "qq_official_webhook":
-                            logger.info(f"收到qq_of请求,正在发送涩图: {url}")
-                            chain = [
-                                Plain(f"标题：{pix['title']}\nPID：{pix['pid']}\n标签：{pix['tags']}"),
-                                Image.fromURL(url) 
-                            ]
-                            return event.chain_result(chain)
-                    else:
+                        logger.info(f"收到qq_of请求,正在发送涩图: {url}")
                         chain = [
                             Plain(f"标题：{pix['title']}\nPID：{pix['pid']}\n标签：{pix['tags']}"),
-                            Image.fromURL(url)
+                            Image.fromURL(url) 
                             ]
+                        return event.chain_result(chain)
+                    else:
+        
                         node = Node(
                             uin=event.get_sender_id(),
                             name=event.get_sender_name(),
-                            content=chain
+                            content=[
+                                Plain(f"标题：{pix['title']}\nPID：{pix['pid']}\n标签：{pix['tags']}"),
+                                Image.fromURL(url)
+                            ]
                         )
                         ns.nodes.append(node)
                         logger.info(f"共{config['pix_num']}张涩图,正在发送第{index+1}张涩图: {url}")
@@ -76,7 +76,7 @@ async def setu_plugin(self, event: AstrMessageEvent, tags: str, config: json):
     r18 = config["r18"]
     cd = config["time"]
         # 获取图片
-    url = f"https://api.lolicon.app/setu/v2?r18={r18}&num={num}&size={size}&tag={标签}"
+    url = f"https://api.lolicon.app/setu/v2?r18={r18}&num={num}&size={size}&tag={tags}"
     ssl_context = aiohttp.TCPConnector(verify_ssl=False)
     async with aiohttp.ClientSession(connector=ssl_context) as session:
         try:
@@ -101,12 +101,12 @@ async def setu_plugin(self, event: AstrMessageEvent, tags: str, config: json):
                     img_title = image_data["title"]
                     image_url = image_data["urls"][size]
                     if event.get_platform_name() == "qq_official_webhook":
-                            logger.info(f"收到qq_of请求,正在发送涩图: {image_url}")
-                            chain = [
-                                Plain(f"标题：{img_title}\nPID：{img_pid}\n标签：{', '.join(img_tag)}"),
-                                Image.fromURL(image_url)
+                        logger.info(f"收到qq_of请求,正在发送涩图: {image_url}")
+                        chain = [
+                            Plain(f"标题：{img_title}\nPID：{img_pid}\n标签：{', '.join(img_tag)}"),
+                            Image.fromURL(image_url)
                             ]
-                            return event.chain_result(chain)
+                        return event.chain_result(chain)
                     else:
                             
                         chain = [

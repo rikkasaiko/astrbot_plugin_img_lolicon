@@ -136,7 +136,8 @@ class SetuPlugin(Star):
         # 从用户消息中获取tag（假设用户输入格式为 "setu tag1 tag2"）
         tags = event.get_message_str().split()[1:]  # 获取所有tag
         tags = '&tag='.join(tags)  # 将tag合并为字符串
-        yield await setu_plugin(self, event, tags, config=self.config)
+        result =  await setu_plugin(self, event, tags, config=self.config)
+        yield result
         
     @llm_tool(name="search_setu")
     async def search_setu_tool(self, event: AstrMessageEvent, num: int):
