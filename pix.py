@@ -38,7 +38,7 @@ async def pix_plugin(self, config: json, event: AstrMessageEvent, tags: str, num
                     pix_url = pix["url"]
                     url = pix_url.replace("i.pximg.net", "i.pixiv.re")
                     if event.get_platform_name() == "qq_official_webhook":
-                        logger.info(f"收到qq_of请求,正在发送涩图: {url}")
+                        logger.info(f"收到qq_of请求,正在发送图片: {url}")
                         chain = [
                             Plain(f"标题：{pix['title']}\nPID：{pix['pid']}\n标签：{pix['tags']}"),
                             Image.fromURL(url) 
@@ -55,7 +55,7 @@ async def pix_plugin(self, config: json, event: AstrMessageEvent, tags: str, num
                             ]
                         )
                         ns.nodes.append(node)
-                        logger.info(f"共{config['pix_num']}张涩图,正在发送第{index+1}张涩图: {url}")
+                        logger.info(f"共{config['pix_num']}张图,正在发送第{index+1}张图: {url}")
                                 
                 return event.chain_result([ns])
             

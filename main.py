@@ -100,10 +100,10 @@ class SetuPlugin(Star):
         user_cooldown = self.cooldowns.get(user_id, 0)
         config = self.config
         message_str = event.get_message_str()
-        tags = event.get_message_str().split()[1:1]
+        tags = event.get_message_str().split()[1:2]
         num = re.findall(r'\d+', message_str)
         num = int(num[0]) if num else config["num"]
-        tags =str(tags) if tags else ""
+        tags =str(tags[0]) if tags else ""
         if user_cooldown > current_time:
             remaining_time = user_cooldown - current_time
             yield event.plain_result(f"冷却中，请等待 {remaining_time} 秒后再试。")
