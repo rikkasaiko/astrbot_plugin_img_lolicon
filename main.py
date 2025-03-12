@@ -92,7 +92,7 @@ class SetuPlugin(Star):
         yield event.plain_result(f"请求数量已设置为: {num}")
         self.config.save_config()
 
-    @filter.command("setu")
+    @filter.command("pix")
     async def pixplugin(self, event: AstrMessageEvent):
         """发送pix一张涩图"""
         user_id = str(event.get_sender_id())  # 获取用户ID并转为字符串
@@ -115,7 +115,7 @@ class SetuPlugin(Star):
         result = await pix_plugin(self, config, event, tags, num)
         yield result
 
-    @command("pix")
+    @command("setu")
     async def setu(self, event: AstrMessageEvent):
         """发送一张lolicon涩图"""
         user_id = str(event.get_sender_id())  # 获取用户ID并转为字符串
