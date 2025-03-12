@@ -8,7 +8,7 @@
     },
     "num":{
         "type": "int",
-        "description": "图片数量,默认是1,且只能是1",
+        "description": "图片数量,默认是1",
         "hint": "图片数量",
         "default": 1
     },
@@ -16,7 +16,7 @@
         "type": "string",
         "description": "图片大小规格,original > regular > small > thumb > mini, 最大是original, 最小是mini,以此类推",  
         "hint": "图片大小规格, original > regular > small > thumb > mini, 默认是regular",
-        "default": "regular",
+        "default": "original",
         "options": ["original", "regular", "small", "thumb", "mini"]
     },
     "time":{
@@ -24,6 +24,37 @@
         "description": "请求cd,默认是30,",
         "hint": "冷却时间",
         "default": 30
+    },
+    "pix_token":{
+        "type": "string",
+        "description": "pix api token",
+        "hint": "pix api token",
+        "default": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbiI6ImUyYzVkOWI4N2U2Y2M0NDk5MGQ3ODFhNTdjNWM5NjcxNmEzNzNmMzJmNDZjMGJlNjM0YTQ1NWM1YTNiMWUwNjQiLCJleHAiOjE4OTk0MjkyMTUsInN1YiI6ImFjY2VzcyIsImlzX3N1cGVydXNlciI6ZmFsc2V9.YOHHuWoH_RH79qGXiy01quiJ3Zmz48gfrugWuP7fBQI"   
+    },
+    "pix_num":{
+        "type": "int",
+        "description": "api数量,默认是1",
+        "hint": "api请求数量",
+        "default": 1
+    },
+    "pix_size":{
+        "type": "string",
+        "description": "图片大小，'large', 'medium', 'original', 'square_medium'",
+        "hint": "图片大小，'large', 'medium', 'original', 'square_medium'",
+        "default": "large",
+        "options": ["original", "medium", "large", "square_medium"]
+    },
+    "pix_r18":{
+        "type": "bool",
+        "description": "r18开关 true:R18 false:非R18",
+        "hint": "r18开关 True:R18 False:非R18",
+        "default": false
+    },
+    "pix_ai":{
+        "type": "bool",
+        "description": "是否包含ai图 true:包含 false:不包含",
+        "hint": "是否包含ai图 true:包含 false:不包含",
+        "default": false
     }
 
 }
