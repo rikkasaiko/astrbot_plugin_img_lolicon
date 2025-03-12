@@ -90,17 +90,36 @@ class SetuPlugin(Star):
         yield event.plain_result(f"请求数量已设置为: {num}")
         self.config.save_config()
 
+    @filter.command("setu")
+    async def pixplugin(self, event: AstrMessageEvent):
+        """发送pix一张涩图"""
+        user_id = str(event.get_sender_id())  # 获取用户ID并转为字符串
+        current_time = int(time.time())
+        user_cooldown = self.cooldowns.get(user_id, 0)
+        config = self.config
+        message_str = event.get_message_str()
+        tags = event.get_message_str().split()[1:1]
+        num = re.findall(r'\d+', message_str)
+        num = int(num[0]) if num else config["num"]
+        tags =str(标签) if标签else ""
+        if user_cooldown > current_time:
+            remaining_time = user_cooldown - current_time
+            yield event.plain_result(f"pix涩图冷却中，请等待 {remaining_time} 秒后再试。")
+            return
+        if num > 10:
+            yield event.plain_result("请求数量不能超过10")
+            return 
+        self.cooldowns[user_id] = current_time + self.config["time"]
+        result = await pix_plugin(self, config, event, tags, num)
+        yield result
 
-
-    @command("setu")
+    @command("pix")
     async def setu(self, event: AstrMessageEvent):
-        """发送一张涩图"""
+        """发送一张lolicon涩图"""
         user_id = str(event.get_sender_id())  # 获取用户ID并转为字符串
         current_time = int(time.time())
 
-        qq_of = event.get_platform_name()
-        
-        
+        # 检查冷却状态
         user_cooldown = self.cooldowns.get(user_id, 0)  # 获取用户的冷却时间，如果没有则默认为0
 
         if user_cooldown > current_time:  # 如果用户的冷却时间大于当前时间
@@ -114,12 +133,8 @@ class SetuPlugin(Star):
 
         # 从用户消息中获取tag（假设用户输入格式为 "setu tag1 tag2"）
         tags = event.get_message_str().split()[1:]  # 获取所有tag
-        tag_param = '&tag='.join(标签)  # 将tag合并为字符串
-
-        size = self.config["size"]
-        num = self.config["num"]
-        r18 = self.config["r18"]
-        cd = self.config["time"]
+        tags = '&tag='.join(标签)  # 将tag合并为字符串
+        yield await setu_plugin(self, event, tags, config=self.config)
 
  
                 
