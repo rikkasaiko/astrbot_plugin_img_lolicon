@@ -15,7 +15,7 @@ async def pix_plugin(self, config: json, event: AstrMessageEvent, tags: str, num
             "Referer": "https://www.pixiv.net"
         }
     payload = {
-            "tags": [标签],
+            "tags": [tags],
             "num": num,
             "size": config["pix_size"],
             "nsfw_tag": [0, 1, 2],
