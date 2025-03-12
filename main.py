@@ -114,61 +114,14 @@ class SetuPlugin(Star):
 
         # 从用户消息中获取tag（假设用户输入格式为 "setu tag1 tag2"）
         tags = event.get_message_str().split()[1:]  # 获取所有tag
-        tag_param = '&tag='.join(tags)  # 将tag合并为字符串
+        tag_param = '&tag='.join(标签)  # 将tag合并为字符串
 
         size = self.config["size"]
         num = self.config["num"]
         r18 = self.config["r18"]
         cd = self.config["time"]
 
-        # 获取图片
-        url = f"https://api.lolicon.app/setu/v2?r18={r18}&num={num}&size={self.size}&tag={tag_param}"
-        ssl_context = aiohttp.TCPConnector(verify_ssl=False)
-        async with aiohttp.ClientSession(connector=ssl_context) as session:
-            try:
-                async with session.get(url) as response:
-                    data = await response.json()
-
-                    if data["error"]:
-                        yield event.plain_result(f"\n获取图片失败：{data['error']}")
-                        return
-
-                    if not data["data"]:
-                        yield event.plain_result(f"\n未获取到图片{url}")
-                        return
-            
-                    logger.info(f"收到请求:图片质量为{size}, 数量为{num}, r18为{r18},冷却时间为{cd}")
-                    
-                    ns = Nodes([])
-                    
-                    
-                    for index, image_data in enumerate(data["data"][:num]):  # 新增循环
-                        img_pid = image_data["pid"]
-                        img_tag = image_data["tags"]
-                        img_title = image_data["title"]
-                        image_url = image_data["urls"][size]
-                        if qq_of == "qq_official_webhook":
-                            logger.info(f"收到qq_of请求,正在发送涩图: {image_url}")
-                            chain = [
-                                Plain(f"标题：{img_title}\nPID：{img_pid}\n标签：{', '.join(img_tag)}"),
-                                Image.fromURL(image_url)
-                            ]
-                            yield event.chain_result(chain)
-                        else:
-                            ns.nodes.append(
-                                Node(
-                                    uin=event.get_sender_id(),
-                                    name=event.get_sender_name(),
-                                    content=[
-                                        Plain(f"标题：{img_title}\nPID：{img_pid}\n标签：{', '.join(img_tag)}"),
-                                        Image.fromURL(image_url)
-                                    ]
-                                )
-                            )
-                        
-                            logger.info(f"收到aiohttq请求,共{num}张涩图,正在发送第{index+1}张涩图: {image_url}")
-         
-                yield event.chain_result([ns])
+ 
                 
 
 
