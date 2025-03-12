@@ -22,6 +22,7 @@ async def pix_plugin(self, config: json, event: AstrMessageEvent, tags: str, num
             "ai": config["pix_ai"],
             "r18": config["pix_r18"],
         }
+        
     ns = Nodes([])
     try:
         async with aiohttp.ClientSession(headers=headers) as session:
@@ -36,7 +37,13 @@ async def pix_plugin(self, config: json, event: AstrMessageEvent, tags: str, num
                 for index, pix in enumerate(data[:num]):
                     pix_url = pix["url"]
                     url = pix_url.replace("i.pximg.net", "i.pixiv.re")
-                        
+                    if event.get_platform_name() == "qq_official_webhook":
+                            logger.info(f"收到qq_of请求,正在发送涩图: {url}")
+                            chain = [
+                                Plain(f"标题：{pix['title']}\nPID：{pix['pid']}\n标签：{pix['tags']}"),
+                                Image.fromURL(url) 
+                            ]
+                            return event.chain_result(chain)
                     chain = [
                             Plain(f"标题：{pix['title']}\nPID：{pix['pid']}\n标签：{pix['tags']}"),
                             Image.fromURL(url)
@@ -57,7 +64,9 @@ async def pix_plugin(self, config: json, event: AstrMessageEvent, tags: str, num
         return event.plain_result(f"😢 JSON 解析失败: {str(e)}")
     except Exception as e:
         return event.plain_result(f"😢 未知错误: {str(e)}")
-        
+            
+         
+            
 async def setu_plugin(self, event: AstrMessageEvent, tags: str, config: json):
     """发送lolicon涩图"""
     config = config
@@ -90,6 +99,14 @@ async def setu_plugin(self, event: AstrMessageEvent, tags: str, config: json):
                     img_tag = image_data["tags"]
                     img_title = image_data["title"]
                     image_url = image_data["urls"][size]
+                    if event.get_platform_name() == "qq_official_webhook":
+                            logger.info(f"收到qq_of请求,正在发送涩图: {image_url}")
+                            chain = [
+                                Plain(f"标题：{img_title}\nPID：{img_pid}\n标签：{', '.join(img_tag)}"),
+                                Image.fromURL(image_url)
+                            ]
+                            return event.chain_result(chain)
+                            
                     chain = [
                             Plain(f"tag: {', '.join(img_tag)}\npid: {img_pid}\ntitle: {img_title}"),
                             Image.fromURL(image_url),
