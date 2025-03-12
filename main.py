@@ -5,6 +5,8 @@ from astrbot.api.message_components import Node, Plain, Image
 from astrbot.api.event.filter import *
 import time
 from astrbot.api.event import filter, AstrMessageEvent
+import re
+from .pix import *
 
 @register("setu", "rikka", "一个lolicon api的涩图插件", "3.0.0")
 class SetuPlugin(Star):
@@ -101,7 +103,7 @@ class SetuPlugin(Star):
         tags = event.get_message_str().split()[1:1]
         num = re.findall(r'\d+', message_str)
         num = int(num[0]) if num else config["num"]
-        tags =str(标签) if标签else ""
+        tags =str(tags) if tags else ""
         if user_cooldown > current_time:
             remaining_time = user_cooldown - current_time
             yield event.plain_result(f"冷却中，请等待 {remaining_time} 秒后再试。")
@@ -133,7 +135,7 @@ class SetuPlugin(Star):
 
         # 从用户消息中获取tag（假设用户输入格式为 "setu tag1 tag2"）
         tags = event.get_message_str().split()[1:]  # 获取所有tag
-        tags = '&tag='.join(标签)  # 将tag合并为字符串
+        tags = '&tag='.join(tags)  # 将tag合并为字符串
         yield await setu_plugin(self, event, tags, config=self.config)
         
     @llm_tool(name="search_setu")

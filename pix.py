@@ -44,17 +44,18 @@ async def pix_plugin(self, config: json, event: AstrMessageEvent, tags: str, num
                                 Image.fromURL(url) 
                             ]
                             return event.chain_result(chain)
-                    chain = [
+                    else:
+                        chain = [
                             Plain(f"标题：{pix['title']}\nPID：{pix['pid']}\n标签：{pix['tags']}"),
                             Image.fromURL(url)
                             ]
-                    node = Node(
+                        node = Node(
                             uin=event.get_sender_id(),
                             name=event.get_sender_name(),
                             content=chain
                         )
-                    ns.nodes.append(node)
-                    logger.info(f"共{config['pix_num']}张涩图,正在发送第{index+1}张涩图: {url}")
+                        ns.nodes.append(node)
+                        logger.info(f"共{config['pix_num']}张涩图,正在发送第{index+1}张涩图: {url}")
                                 
                 return event.chain_result([ns])
             
@@ -106,18 +107,19 @@ async def setu_plugin(self, event: AstrMessageEvent, tags: str, config: json):
                                 Image.fromURL(image_url)
                             ]
                             return event.chain_result(chain)
+                    else:
                             
-                    chain = [
+                        chain = [
                             Plain(f"tag: {', '.join(img_tag)}\npid: {img_pid}\ntitle: {img_title}"),
                             Image.fromURL(image_url),
                         ]
-                    node = Node(
+                        node = Node(
                             uin=event.get_sender_id(),
                             name=event.get_sender_name(),
                             content=chain
                         )
-                    ns.nodes.append(node)
-                    logger.info(f"共{num}张涩图,正在发送第 {index+1} 张涩图: {image_url}")  
-            yield event.chain_result([ns])
+                        ns.nodes.append(node)
+                        logger.info(f"共{num}张涩图,正在发送第 {index+1} 张涩图: {image_url}")  
+                return event.chain_result([ns])
         except Exception as e:
             yield event.plain_result(f"\n获取图片失败：{e}")
