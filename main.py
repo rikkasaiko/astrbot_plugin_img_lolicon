@@ -104,7 +104,7 @@ class SetuPlugin(Star):
         tags =str(标签) if标签else ""
         if user_cooldown > current_time:
             remaining_time = user_cooldown - current_time
-            yield event.plain_result(f"pix涩图冷却中，请等待 {remaining_time} 秒后再试。")
+            yield event.plain_result(f"冷却中，请等待 {remaining_time} 秒后再试。")
             return
         if num > 10:
             yield event.plain_result("请求数量不能超过10")
@@ -135,16 +135,7 @@ class SetuPlugin(Star):
         tags = event.get_message_str().split()[1:]  # 获取所有tag
         tags = '&tag='.join(标签)  # 将tag合并为字符串
         yield await setu_plugin(self, event, tags, config=self.config)
-
- 
-                
-
-
-
-            except Exception as e:
-                yield event.plain_result(f"\n获取图片失败：{e}")
-
-
+        
     @llm_tool(name="search_setu")
     async def search_setu_tool(self, event: AstrMessageEvent, num: int):
         '''根据用户希望发送涩图。当用户要求或者希望你给他1份涩图或者1张涩图,涩图一份,一份涩图时调用此工具
