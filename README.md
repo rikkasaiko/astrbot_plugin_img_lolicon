@@ -6,7 +6,8 @@
 
 </div>
 
-# 目前只支持aiohttp以及官方bot
+# 适配aiohttp、qq_office、gewechat
+- 支持aiohttp、qq_office、gewechat
 
 # 使用lolicon api or pix.zhenxun获取涩图
 
