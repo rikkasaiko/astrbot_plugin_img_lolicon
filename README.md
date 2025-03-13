@@ -9,10 +9,11 @@
 # 适配aiohttp、qq_office、gewechat
 - 支持aiohttp、qq_office、gewechat
 
-# 使用lolicon api or pix.zhenxun获取涩图
-
-- api文档 <https://api.lolicon.app/>
-- api文档 <https://pix.zhenxun.org/#/docs/>
+# 使用lolicon api or pix.zhenxun.org获取涩图
+- lolicon文档 <https://api.lolicon.app/>
+- zhenxun图库文档 <https://pix.zhenxun.org/#/docs/>
+- 图库区别?
+- lolicon的图比较涩点 zhenxun图库的图是正经图(如果不开r18的话)
 
 ## 指令
  `/pix` 获取随机图
