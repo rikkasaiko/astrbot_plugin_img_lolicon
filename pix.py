@@ -44,6 +44,7 @@ async def pix_plugin(self, config: json, event: AstrMessageEvent, tags: str, num
                     plain = f"标题：{pix['title']}\nPID：{pix['pid']}\n标签：{pix['tags']}"
                     image = url
                     platform = event.get_platform_name()
+                    num = num if num else config['pix_num']
                     
                     
                     if platform == "qq_official_webhook":
@@ -51,7 +52,8 @@ async def pix_plugin(self, config: json, event: AstrMessageEvent, tags: str, num
                         return event.chain_result(chain)
                     elif platform == "gewechat":
                         # 微信平台发送完整消息链
-                        logger.info(f"共{num if num else config['pix_num']}张图,正在发送第{index+1}张图: {url}")
+                        logger.info(f"共{num}张图,正在发送第{index+1}张图: {url}")
+                        
                         if index < num - 1:  # 如果不是最后一个图片
                             umo = event.unified_msg_origin
                             message_chain = MessageChain().message(plain).url_image(image)
@@ -66,7 +68,7 @@ async def pix_plugin(self, config: json, event: AstrMessageEvent, tags: str, num
                             content=chain
                         )
                         ns.nodes.append(node)
-                        logger.info(f"共{num if num else config['pix_num']}张图,正在发送第{index+1}张图: {url}")
+                        logger.info(f"共{num}张图,正在发送第{index+1}张图: {url}")
                 
                 if platform not in ["qq_official_webhook", "gewechat"] and ns.nodes:
                     return event.chain_result([ns])
@@ -109,6 +111,7 @@ async def setu_plugin(self, event: AstrMessageEvent, tags: str, config: json):
                     img_tag = image_data["tags"]
                     img_title = image_data["title"]
                     image_url = image_data["urls"][size]
+                    
                     chain = [
                         Plain(f"标题：{img_title}\nPID：{img_pid}\n标签：{', '.join(img_tag)}"),
                         Image.fromURL(image_url)
