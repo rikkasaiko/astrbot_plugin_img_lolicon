@@ -8,7 +8,7 @@ from astrbot.api.event import filter, AstrMessageEvent
 import re
 from .pix import *
 
-@register("setu", "rikka", "包含lolicon api以及zhenxun.org图库的涩图插件", "3.1.0")
+@register("setu", "rikka", "包含lolicon api以及pix.zhenxun.org图库的涩图插件", "3.1.0")
 class SetuPlugin(Star):
     def __init__(self, context: Context, config: AstrBotConfig):
         super().__init__(context)
