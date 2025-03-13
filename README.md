@@ -17,7 +17,7 @@
 
 ## 指令
 - **指令区别?**
-- /pix使用的是zhenxun图库的图, 而/setu是使用lolicon的tu
+- /pix使用的是zhenxun图库的图, 而/setu是使用lolicon的图
 - 
  `/pix` 获取随机图   `/pix tag` 获取一张tag标签的图片  `/pix tag [num(1-10)]` 获取num张tag标签的图片
  ```
