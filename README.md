@@ -63,6 +63,8 @@
 - 或者通过**webui**面板配置
 
 ## 更新日志
+  - 支持aiohttp、qq_office、gewechat
+  - 增加图库
   - 新增以合并转发形式发送
   - 新增`llm调用`
   - 新增帮助信息,输入`/st help`查看帮助信息
