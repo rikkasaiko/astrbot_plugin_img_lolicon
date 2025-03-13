@@ -4,6 +4,7 @@ from astrbot.api.event.filter import *
 from astrbot.api.event import AstrMessageEvent
 from astrbot.api.message_components import Node, Plain, Image
 import asyncio
+from astrbot.api.event import MessageChain
 
 async def pix_plugin(self, config: json, event: AstrMessageEvent, tags: str, num: int):
     """发送一张pix涩图"""
@@ -23,7 +24,6 @@ async def pix_plugin(self, config: json, event: AstrMessageEvent, tags: str, num
             "r18": config["pix_r18"],
         }
         
-    ns = Nodes([])
     try:
         async with aiohttp.ClientSession(headers=headers) as session:
             async with session.post(url, json=payload) as response:
@@ -32,33 +32,45 @@ async def pix_plugin(self, config: json, event: AstrMessageEvent, tags: str, num
                 data = data.get("data")
                 if code == 200:
                     if not data:
-                        return event.plain_result("没有找到符合条件的图片")
-                        
+                       return event.plain_result("没有找到符合条件的图片")
+                ns = Nodes([])
                 for index, pix in enumerate(data[:num]):
                     pix_url = pix["url"]
                     url = pix_url.replace("i.pximg.net", "i.pixiv.re")
-                    if event.get_platform_name() == "qq_official_webhook":
+                    chain = [
+                        Plain(f"标题：{pix['title']}\nPID：{pix['pid']}\n标签：{pix['tags']}"),
+                        Image.fromURL(url)
+                    ]
+                    plain = f"标题：{pix['title']}\nPID：{pix['pid']}\n标签：{pix['tags']}"
+                    image = url
+                    platform = event.get_platform_name()
+                    
+                    
+                    if platform == "qq_official_webhook":
                         logger.info(f"收到qq_of请求,正在发送图片: {url}")
-                        chain = [
-                            Plain(f"标题：{pix['title']}\nPID：{pix['pid']}\n标签：{pix['tags']}"),
-                            Image.fromURL(url) 
-                            ]
                         return event.chain_result(chain)
+                    elif platform == "gewechat":
+                        # 微信平台发送完整消息链
+                        logger.info(f"共{num if num else config['pix_num']}张图,正在发送第{index+1}张图: {url}")
+                        if index < num - 1:  # 如果不是最后一个图片
+                            umo = event.unified_msg_origin
+                            message_chain = MessageChain().message(plain).url_image(image)
+                            await self.context.send_message(event.unified_msg_origin, message_chain)
+                            await asyncio.sleep(0.5)  # 添加发送间隔
+                            continue
+                        return event.chain_result(chain)  # 最后一个消息使用return返回
                     else:
-        
                         node = Node(
                             uin=event.get_sender_id(),
                             name=event.get_sender_name(),
-                            content=[
-                                Plain(f"标题：{pix['title']}\nPID：{pix['pid']}\n标签：{pix['tags']}"),
-                                Image.fromURL(url)
-                            ]
+                            content=chain
                         )
                         ns.nodes.append(node)
-                        logger.info(f"共{config['pix_num']}张图,正在发送第{index+1}张图: {url}")
-                                
-                return event.chain_result([ns])
-            
+                        logger.info(f"共{num if num else config['pix_num']}张图,正在发送第{index+1}张图: {url}")
+                
+                if platform not in ["qq_official_webhook", "gewechat"] and ns.nodes:
+                    return event.chain_result([ns])
+
     except aiohttp.ClientError as e:
         return event.plain_result(f"😢 网络请求失败: {str(e)}")
     except ValueError as e:
@@ -97,19 +109,26 @@ async def setu_plugin(self, event: AstrMessageEvent, tags: str, config: json):
                     img_tag = image_data["tags"]
                     img_title = image_data["title"]
                     image_url = image_data["urls"][size]
+                    chain = [
+                        Plain(f"标题：{img_title}\nPID：{img_pid}\n标签：{', '.join(img_tag)}"),
+                        Image.fromURL(image_url)
+                    ]
+                    plain = f"标题：{img_title}\nPID：{img_pid}\n标签：{', '.join(img_tag)}"
+                    image = image_url
                     if event.get_platform_name() == "qq_official_webhook":
                         logger.info(f"收到qq_of请求,正在发送涩图: {image_url}")
-                        chain = [
-                            Plain(f"标题：{img_title}\nPID：{img_pid}\n标签：{', '.join(img_tag)}"),
-                            Image.fromURL(image_url)
-                            ]
                         return event.chain_result(chain)
-                    else:
-                            
-                        chain = [
-                            Plain(f"tag: {', '.join(img_tag)}\npid: {img_pid}\ntitle: {img_title}"),
-                            Image.fromURL(image_url),
-                        ]
+                    
+                    elif event.get_platform_name() == "gewechat":
+                        logger.info(f"共{num}张涩图,正在发送第 {index+1} 张涩图: {image_url}")
+                        if index < num - 1:  # 如果不是最后一个图片
+                            umo = event.unified_msg_origin
+                            message_chain = MessageChain().message(plain).url_image(image) #储存消息链
+                            await self.context.send_message(event.unified_msg_origin, message_chain)
+                            await asyncio.sleep(0.5)  # 添加发送间隔
+                            continue
+                        return event.chain_result(chain) 
+                    else:     
                         node = Node(
                             uin=event.get_sender_id(),
                             name=event.get_sender_name(),
@@ -117,6 +136,8 @@ async def setu_plugin(self, event: AstrMessageEvent, tags: str, config: json):
                         )
                         ns.nodes.append(node)
                         logger.info(f"共{num}张涩图,正在发送第 {index+1} 张涩图: {image_url}")  
-                return event.chain_result([ns])
+                if event.get_platform_name not in ["qq_official_webhook", "gewechat"] and ns.nodes:
+                    return event.chain_result([ns])
+                
         except Exception as e:
             return event.plain_result(f"\n获取图片失败：{e}")

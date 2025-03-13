@@ -53,7 +53,7 @@ class SetuPlugin(Star):
         else:
             self.config["time"] = int(cd)  # 更新配置
             yield event.plain_result(f"冷却时间设置为: {cd}秒")
-            logger.info(f"冷却时间设置为: {self.config}秒")
+            logger.info(f"冷却时间设置为: {self.cooldowns}秒")
             self.config.save_config()
 
 
@@ -179,8 +179,8 @@ class SetuPlugin(Star):
                     qq_of = event.get_platform_name()
                     for index, item in enumerate(data["data"][:nums]):
                         image_url = item["urls"][size]
-                        if qq_of == "qq_official_webhook":
-                            logger.info(f"收到qq_of请求,正在发送图片: {image_url}")
+                        if event.get_platform_name() == "qq_official_webhook":
+                            logger.info(f"收到qq_of and gewechat请求,正在发送图片: {image_url}")
                             chain = [
                                 Plain(f"标题：{item['title']}\nPID：{item['pid']}\n标签：{', '.join(item['tags'])}"),
                                 Image.fromURL(image_url)
@@ -188,19 +188,23 @@ class SetuPlugin(Star):
                             yield event.chain_result(chain)
                             
                         else:
+                            chain = [
+                                Plain(f"标题：{item['title']}\nPID：{item['pid']}\n标签：{', '.join(item['tags'])}"),
+                                Image.fromURL(image_url)
+                            ]
                             ns.nodes.append(
                                 Node(
                                     uin=event.get_sender_id(),
                                     name=event.get_sender_name(),
-                                    content=[
-                                        Plain(f"标题：{item['title']}\nPID：{item['pid']}\n标签：{', '.join(item['tags'])}"),
-                                        Image.fromURL(image_url)
-                                    ]
+                                    content=chain
                                 )  
                             )
                             logger.info(f"收到aiohttq请求,共{nums}张涩图,正在发送第{index+1}张涩图: {image_url}")
+                    if event.get_platform_name() == "aiohttp":
                         
-                    yield event.chain_result([ns])
+                        yield event.chain_result([ns])
+                    else:
+                        yield event.chain_result(chain)
                     
         except Exception as e:
             logger.error(f"工具调用失败：{str(e)}")
