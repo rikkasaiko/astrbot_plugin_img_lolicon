@@ -16,6 +16,9 @@
 - lolicon的图比较涩点,  zhenxun图库的图是正经图(如果不开r18的话)
 
 ## 指令
+- **指令区别?**
+- /pix使用的是zhenxun图库的图, 而/setu是使用lolicon的tu
+- 
  `/pix` 获取随机图   `/pix tag` 获取一张tag标签的图片  `/pix tag [num(1-10)]` 获取num张tag标签的图片
  ```
  /pix   or  /pix 小鸟游六花   or   /pix 小鸟游六花 5  
