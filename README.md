@@ -6,12 +6,26 @@
 
 </div>
 
+# 目前只支持aiohttp以及官方bot
+
 # 使用lolicon api or pix.zhenxun获取涩图
 
 - api文档 <https://api.lolicon.app/>
 - api文档 <https://pix.zhenxun.org/#/docs/>
 
 ## 指令
+ `/pix` 获取随机图
+ ```
+ /pix
+ ```
+ `/pix tag` 获取一张tag标签的图片
+ ```
+ /pix 小鸟游六花
+ ```
+ `/pix tag [num(1-10)]` 获取num张tag标签的图片
+ ```
+ /pix 小鸟游六花 5
+ ```
  `/st help` 查看帮助信息
  ```
   /st help
