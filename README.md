@@ -9,24 +9,16 @@
 # 适配aiohttp、qq_office、gewechat
 - 支持aiohttp、qq_office、gewechat
 
-# 使用lolicon api or pix.zhenxun.org获取涩图
+# 使用lolicon api and pix.zhenxun.org获取涩图
 - lolicon文档 <https://api.lolicon.app/>
 - zhenxun图库文档 <https://pix.zhenxun.org/#/docs/>
 - 图库区别?
 - lolicon的图比较涩点,  zhenxun图库的图是正经图(如果不开r18的话)
 
 ## 指令
- `/pix` 获取随机图
+ `/pix` 获取随机图   `/pix tag` 获取一张tag标签的图片  `/pix tag [num(1-10)]` 获取num张tag标签的图片
  ```
- /pix
- ```
- `/pix tag` 获取一张tag标签的图片
- ```
- /pix 小鸟游六花
- ```
- `/pix tag [num(1-10)]` 获取num张tag标签的图片
- ```
- /pix 小鸟游六花 5
+ /pix   or  /pix 小鸟游六花   or   /pix 小鸟游六花 5  
  ```
  `/st help` 查看帮助信息
  ```
