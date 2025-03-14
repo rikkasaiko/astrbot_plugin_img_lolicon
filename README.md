@@ -6,8 +6,8 @@
 
 </div>
 
-# 适配aiohttp、qq_office、gewechat
-- 支持aiohttp、qq_office、gewechat
+# 适配aiocqhttp、qq_office、gewechat
+- 支持aiocqhttp、qq_office、gewechat
 
 # 使用lolicon api and pix.zhenxun.org获取涩图
 - lolicon文档 <https://api.lolicon.app/>
@@ -59,7 +59,7 @@
 - 或者通过**webui**面板配置
 
 ## 更新日志
-  - 支持aiohttp、qq_office、gewechat
+  - 支持aiocqhttp、qq_office、gewechat
   - 增加图库
   - 新增以合并转发形式发送
   - 新增`llm调用`
